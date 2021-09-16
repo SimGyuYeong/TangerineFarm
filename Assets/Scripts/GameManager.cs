@@ -13,7 +13,7 @@ public class GameManager : MonoSingletone<GameManager>
     public UIManager UI {  get { return uIManager;  } }
 
     private string SAVE_PATH = "";
-    private string SAVE_FILENAME = "/SaveFile.json";
+    private string SAVE_FILENAME = "/SaveFile.text";
 
     private void Awake()
     {
@@ -25,6 +25,12 @@ public class GameManager : MonoSingletone<GameManager>
         uIManager = GetComponent<UIManager>();
         LoadFromJson();
         InvokeRepeating("SaveToJson", 1f, 60f);
+    }
+
+    public void OnClickTree()
+    {
+        CurrentUser.gyul += CurrentUser.gpc;
+        uIManager.UpdatePropertyPanel();
     }
 
     // Start is called before the first frame update
