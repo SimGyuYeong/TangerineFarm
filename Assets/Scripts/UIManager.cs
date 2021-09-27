@@ -7,34 +7,127 @@ using System;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("귤 보유량")]
     [SerializeField]
     private Text gyulText = null;
-    [Header("돈 보유량")]
     [SerializeField]
     private Text moneyText = null;
     [SerializeField]
+    private Text ageText = null;
+    [SerializeField]
+    private Text gpsText = null;
+    [SerializeField]
+    private Text gcmText = null;
+    [SerializeField]
     private RectTransform controlPanel = null;
+    [SerializeField]
+    private GameObject sellPanelTemplate = null;
+    [SerializeField]
+    private Transform sellContentRoot = null;
+    [SerializeField]
+    private GameObject upgradePanelTemplate = null;
+    [SerializeField]
+    private Transform upgradeContentRoot = null;
+    [SerializeField]
+    private GameObject eventPanelTemplate = null;
+    [SerializeField]
+    private Transform eventContentRoot = null;
+    [SerializeField]
+    private GameObject stopMenuPanel = null;
+    [SerializeField]
+    private Image autoSellButton = null;
+    [SerializeField]
+    private GameObject inputName = null;
+
     public GameObject[] scrollArr = null;
     public Image[] buttonArr = null;
+
+    private List<SellPanel> sellPanelList = new List<SellPanel>();
+    private List<UpgradePanel> upgradePanelList = new List<UpgradePanel>();
+    private List<EventPanel> eventPanelList = new List<EventPanel>();
 
     private bool isOn = false;
     private bool scrollOn = false;
     private int scrollNum;
+    private bool isPause = false;
 
-    private void Start()
+    public void Start()
     {
-        UpdatePropertyPanel();
+        if(GameManager.Instance.CurrentUser.name == "player")
+        {
+            inputName.SetActive(true);
+        }
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClickExitButton();
+        }
+    }
+
+    public void Init()
+    {
+        GameObject newPanel = null;
+        SellPanel sellPanelComponent = null;
+        UpgradePanel upgradePanelComponent = null;
+        EventPanel evenetPanelComponent = null;
+        for (int i = 0; i < GameManager.Instance.CurrentUser.sellList.Count; i++)
+        {
+            newPanel = Instantiate(sellPanelTemplate, sellContentRoot);
+            sellPanelComponent = newPanel.GetComponent<SellPanel>();
+            sellPanelComponent.Init(i);
+            sellPanelList.Add(sellPanelComponent);
+            newPanel.SetActive(true);
+        }
+
+        for (int i = 0; i < GameManager.Instance.CurrentUser.upgradeList.Count; i++)
+        {
+            newPanel = Instantiate(upgradePanelTemplate, upgradeContentRoot);
+            upgradePanelComponent = newPanel.GetComponent<UpgradePanel>();
+            upgradePanelComponent.Init(i);
+            upgradePanelList.Add(upgradePanelComponent);
+            newPanel.SetActive(true);
+        }
+
+        for (int i = 0; i < GameManager.Instance.CurrentUser.eventList.Count; i++)
+        {
+            newPanel = Instantiate(eventPanelTemplate, eventContentRoot);
+            evenetPanelComponent = newPanel.GetComponent<EventPanel>();
+            evenetPanelComponent.Init(i);
+            eventPanelList.Add(evenetPanelComponent);
+            newPanel.SetActive(true);
+        }
     }
 
     public void UpdatePropertyPanel()
     {
-        GetUnit(GameManager.Instance.CurrentUser.gyul);
         gyulText.text = string.Format("x {0}", GetUnit(GameManager.Instance.CurrentUser.gyul));
         moneyText.text = string.Format("x {0}", GetUnit(GameManager.Instance.CurrentUser.money));
+        ageText.text = string.Format("{0} {1}세", GameManager.Instance.CurrentUser.name, GetUnit(GameManager.Instance.CurrentUser.upgradeList[0].amount + 1));
+        gpsText.text = string.Format("초당 귤: {0}개", GetUnit(GameManager.Instance.CurrentUser.gPs));
+        gcmText.text = string.Format("초당 수익: {0}", GetUnit((GameManager.Instance.CurrentUser.upgradeList[6].amount+1) * GameManager.Instance.CurrentUser.upgradeList[5].amount));
+        gcmText.color = !GameManager.Instance.autoSell ? Color.black : Color.white;
+        RefreshList();
     }
 
-    private string GetUnit(long unit)
+    public void RefreshList()
+    {
+        for (int i = 0; i < sellPanelList.Count; i++)
+        {
+            sellPanelList[i].UpdateValues();
+        }
+        for (int i = 0; i < upgradePanelList.Count; i++)
+        {
+            upgradePanelList[i].UpdateValues();
+        }
+        for (int i = 0; i < eventPanelList.Count; i++)
+        {
+            eventPanelList[i].UpdateValues();
+        }
+    }
+
+    public string GetUnit(long unit)
     {
         if(unit >= 1000)
         {
@@ -73,37 +166,74 @@ public class UIManager : MonoBehaviour
 
     public void OnToggleChanged()
     {
-        controlPanel.DOAnchorPosX(isOn ? 140f : -200f, 0.7f);
-        isOn = !isOn ? isOn = true : isOn = false;
+        controlPanel.DOAnchorPosX(isOn ? 262f : -410f, 0.8f);
+        isOn = !isOn;
     }
 
-    public void OnClickScrollButton(int num)
+    public void AllMenuButtonFalse()
     {
         for (int i = 0; i < 3; i++)
         {
             scrollArr[i].SetActive(false);
-            buttonArr[i].color = Color.white;
+            buttonArr[i].color = Color.gray;
         }
+    }
+
+    public void OnClickScrollButton(int num)
+    {
+        AllMenuButtonFalse();
         if(scrollNum != num)
         {
-            scrollArr[scrollNum].SetActive(false);
-            buttonArr[scrollNum].color = Color.white;
             scrollArr[num].SetActive(true);
-            buttonArr[num].color = Color.green;
+            buttonArr[num].color = Color.white;
             scrollOn = true;
             scrollNum = num;
             return;
         }
         if (!scrollOn)
         {
-            buttonArr[num].color = Color.green;
+            buttonArr[num].color = Color.white;
             scrollArr[num].SetActive(true);
             scrollOn = true;
         }
         else
         {
-            buttonArr[num].color = Color.white;
+            buttonArr[num].color = Color.gray;
             scrollOn = false;
         }
+    }
+
+    public void OnClickAutoSellButton()
+    {
+        GameManager.Instance.autoSell = !GameManager.Instance.autoSell;
+        UpdatePropertyPanel();
+        autoSellButton.color = GameManager.Instance.autoSell ? Color.white : Color.gray;
+    }
+
+    public void Pause()
+    {
+        isPause = !isPause;
+        if (isPause)
+        {
+            Time.timeScale = 0f;
+            stopMenuPanel.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            stopMenuPanel.SetActive(false);
+        }
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+    }
+
+    public void OnEndEditEvent(string str)
+    {
+        GameManager.Instance.CurrentUser.name = str;
+        inputName.SetActive(false);
+    }
+
+    public void OnClickExitButton()
+    {
+        Application.Quit();
     }
 }

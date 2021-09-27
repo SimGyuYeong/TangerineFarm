@@ -12,52 +12,100 @@ public class GameManager : MonoSingletone<GameManager>
     private UIManager uIManager = null;
     public UIManager UI {  get { return uIManager;  } }
 
-    private string SAVE_PATH = "";
-    private string SAVE_FILENAME = "/SaveFile.text";
+    private string SAVE_DATA_PATH;
+    private string SAVE_FILE_NAME = "/SaveFile.txt";
+
+    [SerializeField]
+    private Transform pool = null;
+    public Transform Pool { get { return pool; } }
+
+    [SerializeField]
+    private GyulImage gyulImageTemplate = null;
+
+    public bool autoSell = true;
 
     private void Awake()
     {
-        SAVE_PATH = Application.dataPath + "/Save";
-        if (Directory.Exists(SAVE_PATH) == false)
-        {
-            Directory.CreateDirectory(SAVE_PATH);
-        }
+        SAVE_DATA_PATH = Application.persistentDataPath;
         uIManager = GetComponent<UIManager>();
         LoadFromJson();
-        InvokeRepeating("SaveToJson", 1f, 60f);
+        uIManager.Init();
+        uIManager.UpdatePropertyPanel();
+        InvokeRepeating("GyulPerSecond", 0f, 1f);
+        InvokeRepeating("AutoGyulChangeMoney", 0f, 1f);
+        uIManager.AllMenuButtonFalse();
     }
 
     public void OnClickTree()
     {
-        CurrentUser.gyul += CurrentUser.gpc;
+        CurrentUser.gyul += CurrentUser.mouseGpC; 
+        uIManager.UpdatePropertyPanel();
+
+        GyulImage gyulImage = null;
+        if (Pool.childCount > 0)
+        {
+            gyulImage = Pool.GetChild(0).GetComponent<GyulImage>();
+            gyulImage.transform.SetParent(gyulImageTemplate.transform.parent);
+        }
+        else
+        {
+            gyulImage = Instantiate(gyulImageTemplate, gyulImageTemplate.transform.parent).GetComponent<GyulImage>();
+        }
+        gyulImage.Show(Input.mousePosition);
+    }
+
+    private void GyulPerSecond()
+    {
+        CurrentUser.gyul += CurrentUser.gPs;
         uIManager.UpdatePropertyPanel();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void AutoGyulChangeMoney()
     {
-        
+        if (autoSell)
+        {
+            if (CurrentUser.TotalGcM >= 1)
+            {
+                long amount = CurrentUser.baseGcM();
+                CurrentUser.money += CurrentUser.TotalGcM;
+                CurrentUser.gyul -= amount;
+                uIManager.UpdatePropertyPanel();
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private void LoadFromJson()
     {
-        string json = "";
-        if (File.Exists(SAVE_PATH + SAVE_FILENAME) == true)
+        if (File.Exists(string.Concat(SAVE_DATA_PATH, SAVE_FILE_NAME)))
         {
-            json = File.ReadAllText(SAVE_PATH + SAVE_FILENAME);
-            user = JsonUtility.FromJson<User>(json);
+            string jsonString = File.ReadAllText(string.Concat(SAVE_DATA_PATH, SAVE_FILE_NAME));
+            user = JsonUtility.FromJson<User>(jsonString);
+        }
+        else
+        {
+            user = new User();
+            user.gyul = 0;
+            user.money = 0;
+            user.sellList = new List<Sell>();
+            user.sellList.Add(new Sell("낱개판매", 0, 1));
+            user.sellList.Add(new Sell("상자판매", 1, 100));
+            user.sellList.Add(new Sell("대량판매", 2, 750));
+            user.upgradeList = new List<Upgrade>();
+            user.upgradeList.Add(new Upgrade("감귤나무", 0, "성장")); //클릭당 귤 증가
+            user.upgradeList.Add(new Upgrade("수질", 1, "개선")); //클릭당 귤 증가
+            user.upgradeList.Add(new Upgrade("비료", 2, "강화")); //클릭당 귤 증가
+            user.upgradeList.Add(new Upgrade("일손", 3, "늘리기")); //초당 귤 증가
+            user.upgradeList.Add(new Upgrade("수확기계", 4, "강화")); //초당  귤 증가
+            user.upgradeList.Add(new Upgrade("판매업체", 5, "섭외")); //초당 귤 교환 증가
+            user.upgradeList.Add(new Upgrade("업체 수", 6, "늘리기")); //초당 가져가는 귤 개수 증가
+            SaveToJson();
         }
     }
 
     private void SaveToJson()
     {
-        string json = JsonUtility.ToJson(user, true);
-        File.WriteAllText(SAVE_PATH + SAVE_FILENAME, json, System.Text.Encoding.UTF8);
+        string jsonString = JsonUtility.ToJson(CurrentUser, true);
+        File.WriteAllText(string.Concat(SAVE_DATA_PATH, SAVE_FILE_NAME), jsonString, System.Text.Encoding.UTF8);
     }
 
     public void OnApplicationQuit()
