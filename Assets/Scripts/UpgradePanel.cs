@@ -5,20 +5,13 @@ using UnityEngine.UI;
 
 public class UpgradePanel : MonoBehaviour
 {
-    [SerializeField]
-    private Text nameText = null;
-    [SerializeField]
-    private Text amountText = null;
-    [SerializeField]
-    private Text priceText = null;
-    [SerializeField]
-    private Text upgradeText = null;
-    [SerializeField]
-    private Image upgradeIconImage = null;
-    [SerializeField]
-    private Image backgroundImage = null;
-    [SerializeField]
-    private Sprite[] upgradeSprite = null;
+    [SerializeField] private Text nameText = null;
+    [SerializeField] private Text amountText = null;
+    [SerializeField] private Text priceText = null;
+    [SerializeField] private Text upgradeText = null;
+    [SerializeField] private Image upgradeIconImage = null;
+    [SerializeField] private Image backgroundImage = null;
+    [SerializeField] private Sprite[] upgradeSprite = null;
 
     private Upgrade upgrade = null;
     private int upgradeNumber = 0;

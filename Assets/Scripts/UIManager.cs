@@ -4,39 +4,26 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Numerics;
 using System;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField]
-    private Text gyulText = null;
-    [SerializeField]
-    private Text moneyText = null;
-    [SerializeField]
-    private Text ageText = null;
-    [SerializeField]
-    private Text gpsText = null;
-    [SerializeField]
-    private Text gcmText = null;
-    [SerializeField]
-    private RectTransform controlPanel = null;
-    [SerializeField]
-    private GameObject sellPanelTemplate = null;
-    [SerializeField]
-    private Transform sellContentRoot = null;
-    [SerializeField]
-    private GameObject upgradePanelTemplate = null;
-    [SerializeField]
-    private Transform upgradeContentRoot = null;
-    [SerializeField]
-    private GameObject eventPanelTemplate = null;
-    [SerializeField]
-    private Transform eventContentRoot = null;
-    [SerializeField]
-    private GameObject stopMenuPanel = null;
-    [SerializeField]
-    private Image autoSellButton = null;
-    [SerializeField]
-    private GameObject inputName = null;
+    [SerializeField] private Text gyulText = null;
+    [SerializeField] private Text moneyText = null;
+    [SerializeField] private Text ageText = null;
+    [SerializeField] private Text gpsText = null;
+    [SerializeField] private Text gcmText = null;
+    [SerializeField] private RectTransform controlPanel = null;
+    [SerializeField] private GameObject sellPanelTemplate = null;
+    [SerializeField] private Transform sellContentRoot = null;
+    [SerializeField] private GameObject upgradePanelTemplate = null;
+    [SerializeField] private Transform upgradeContentRoot = null;
+    [SerializeField] private GameObject eventPanelTemplate = null;
+    [SerializeField] private Transform eventContentRoot = null;
+    [SerializeField] private GameObject stopMenuPanel = null;
+    [SerializeField] private Image autoSellButton = null;
+    [SerializeField] private GameObject inputName = null;
+    public GameObject helpCanvas = null;
 
     public GameObject[] scrollArr = null;
     public Image[] buttonArr = null;
@@ -55,6 +42,7 @@ public class UIManager : MonoBehaviour
         if(GameManager.Instance.CurrentUser.name == "player")
         {
             inputName.SetActive(true);
+            helpCanvas.SetActive(true);
         }
     }
 
@@ -62,7 +50,7 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            OnClickExitButton();
+            Pause();
         }
     }
 
@@ -177,28 +165,40 @@ public class UIManager : MonoBehaviour
             scrollArr[i].SetActive(false);
             buttonArr[i].color = Color.gray;
         }
+        ageText.gameObject.SetActive(true);
+        gcmText.gameObject.SetActive(true);
+        gpsText.gameObject.SetActive(true);
     }
 
     public void OnClickScrollButton(int num)
     {
         AllMenuButtonFalse();
-        if(scrollNum != num)
+        if (scrollNum != num)
         {
             scrollArr[num].SetActive(true);
             buttonArr[num].color = Color.white;
             scrollOn = true;
             scrollNum = num;
+            ageText.gameObject.SetActive(false);
+            gcmText.gameObject.SetActive(false);
+            gpsText.gameObject.SetActive(false);
             return;
         }
+
         if (!scrollOn)
         {
             buttonArr[num].color = Color.white;
             scrollArr[num].SetActive(true);
             scrollOn = true;
+            ageText.gameObject.SetActive(false);
+            gcmText.gameObject.SetActive(false);
+            gpsText.gameObject.SetActive(false);
         }
+
         else
         {
             buttonArr[num].color = Color.gray;
+            scrollArr[num].SetActive(false);
             scrollOn = false;
         }
     }
@@ -235,5 +235,10 @@ public class UIManager : MonoBehaviour
     public void OnClickExitButton()
     {
         Application.Quit();
+    }
+
+    public void Help()
+    {
+        helpCanvas.SetActive(true);
     }
 }

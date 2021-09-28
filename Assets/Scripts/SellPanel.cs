@@ -5,22 +5,14 @@ using UnityEngine.UI;
 
 public class SellPanel : MonoBehaviour
 {
-    [SerializeField]
-    private Text nameText = null;
-    [SerializeField]
-    private Text amountText = null;
-    [SerializeField]
-    private Text priceText = null;
-    [SerializeField]
-    private Image sellIconImage = null;
-    [SerializeField]
-    private Image backgroundImage = null;
-    [SerializeField]
-    private Button purchaseButton = null;
-    [SerializeField]
-    private Text upgradeText = null;
-    [SerializeField]
-    private Sprite[] sellSprite = null;
+    [SerializeField] private Text nameText = null;
+    [SerializeField] private Text amountText = null;
+    [SerializeField] private Text priceText = null;
+    [SerializeField] private Image sellIconImage = null;
+    [SerializeField] private Image backgroundImage = null;
+    [SerializeField] private Button purchaseButton = null;
+    [SerializeField] private Text upgradeText = null;
+    [SerializeField] private Sprite[] sellSprite = null;
 
     private Sell sell = null;
     private int sellNumber = 0;

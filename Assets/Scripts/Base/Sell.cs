@@ -20,7 +20,7 @@ public class Sell
     {
         get
         {
-            return (long)((sellNumber + 1) * 56.49 * gyul) * 2;
+            return (long)((sellNumber + 1) * 12.5 * gyul) * ( 3 / (sellNumber+1) );
         }
     }
 
