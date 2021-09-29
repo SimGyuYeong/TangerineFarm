@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System;
-using System.Collections;
-
 [System.Serializable]
 public class Upgrade
 {
@@ -10,7 +6,6 @@ public class Upgrade
     public int amount = 0;
     public string buttonText;
 
-    public Upgrade() { }
     public Upgrade(string name, int number, string button)
     {
         upgradeNumber = number;
@@ -60,7 +55,7 @@ public class Upgrade
         {
             if(upgradeNumber <= 2)
             {
-                return (int)(amount * baseGpC / 3.5f);
+                return (int)((amount * baseGpC) / 3.5f);
             }
             else
             {

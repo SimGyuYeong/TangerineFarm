@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Numerics;
 using System;
-using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {

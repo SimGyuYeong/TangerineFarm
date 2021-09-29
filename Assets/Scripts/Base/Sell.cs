@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 [System.Serializable]
 public class Sell
 {
@@ -8,7 +6,6 @@ public class Sell
     public int amount;
     public long gyul;
 
-    public Sell() { }
     public Sell(string name, int number, int amount)
     {
         sellNumber = number;
@@ -36,7 +33,7 @@ public class Sell
     {
         get
         {
-            return gyul + (sellNumber + gyul / 30);
+            return gyul <= 30 ? 1 : sellNumber + gyul / 15;
         }
     }
 
@@ -44,7 +41,7 @@ public class Sell
     {
         get
         {
-            return (long)(amount <= 0f ? baseMoney : amount * baseMoney);
+            return amount <= 0f ? baseMoney + gyul : (baseMoney * (amount+1) ) + gyul;
         }
     }
 

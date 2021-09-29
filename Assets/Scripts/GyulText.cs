@@ -2,18 +2,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class GyulImage : MonoBehaviour
+public class GyulText : MonoBehaviour
 {
     private Text gyulText = null;
     [SerializeField]
     private Transform gyulTextPosition = null;
 
-    public void Show(Vector2 mousePosition)
+    public void Show(Vector2 mousePosition, int check, long addGyul)
     {
         gyulText = GetComponent<Text>();
         gameObject.SetActive(true);
 
-        gyulText.text = string.Format("+{0}", GameManager.Instance.UI.GetUnit(GameManager.Instance.CurrentUser.mouseGpC));
+        gyulText.text = string.Format("+{0}", GameManager.Instance.UI.GetUnit(addGyul));
+        if (check == 1) gyulText.color = Color.white;
+        if (check == 2) gyulText.color = Color.yellow;
         transform.position = gyulTextPosition.transform.position;
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 

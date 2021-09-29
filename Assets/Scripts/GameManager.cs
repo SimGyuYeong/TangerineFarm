@@ -11,7 +11,7 @@ public class GameManager : MonoSingletone<GameManager>
 
     private UIManager uIManager = null;
     public UIManager UI {  get { return uIManager;  } }
-
+        
     private string SAVE_DATA_PATH;
     private string SAVE_FILE_NAME = "/SaveFile.txt";
 
@@ -20,7 +20,7 @@ public class GameManager : MonoSingletone<GameManager>
     public Transform Pool { get { return pool; } }
 
     [SerializeField]
-    private GyulImage gyulImageTemplate = null;
+    private GyulText gyulTextTemplate = null;
 
     public bool autoSell = true;
 
@@ -38,20 +38,33 @@ public class GameManager : MonoSingletone<GameManager>
 
     public void OnClickTree()
     {
-        CurrentUser.gyul += CurrentUser.mouseGpC; 
-        uIManager.UpdatePropertyPanel();
-
-        GyulImage gyulImage = null;
-        if (Pool.childCount > 0)
+        CurrentUser.gyul += CurrentUser.mouseGpC;
+        int chance = Random.Range(0, 100);
+        if (chance < CurrentUser.doubleChance)
         {
-            gyulImage = Pool.GetChild(0).GetComponent<GyulImage>();
-            gyulImage.transform.SetParent(gyulImageTemplate.transform.parent);
+            CurrentUser.gyul += CurrentUser.mouseGpC;
+            gyulTextShow(2, CurrentUser.mouseGpC * 2);
         }
         else
         {
-            gyulImage = Instantiate(gyulImageTemplate, gyulImageTemplate.transform.parent).GetComponent<GyulImage>();
+           gyulTextShow(1, CurrentUser.mouseGpC);
         }
-        gyulImage.Show(Input.mousePosition);
+        uIManager.UpdatePropertyPanel();
+    }
+
+    private void gyulTextShow(int check, long addGyul)
+    {
+        GyulText gyulText = null;
+        if (Pool.childCount > 0)
+        {
+            gyulText = Pool.GetChild(0).GetComponent<GyulText>();
+            gyulText.transform.SetParent(gyulTextTemplate.transform.parent);
+        }
+        else
+        {
+            gyulText = Instantiate(gyulTextTemplate, gyulTextTemplate.transform.parent).GetComponent<GyulText>();
+        }
+        gyulText.Show(Input.mousePosition, check, addGyul);
     }
 
     private void GyulPerSecond()
@@ -98,6 +111,8 @@ public class GameManager : MonoSingletone<GameManager>
             user.upgradeList.Add(new Upgrade("수확기계", 4, "강화")); //초당  귤 증가
             user.upgradeList.Add(new Upgrade("판매업체", 5, "섭외")); //초당 귤 교환 증가
             user.upgradeList.Add(new Upgrade("업체 수", 6, "늘리기")); //초당 가져가는 귤 개수 증가
+            user.eventList = new List<Event>();
+            user.eventList.Add(new Event("더블클릭", 0, 5f));   
             SaveToJson();
         }
     }

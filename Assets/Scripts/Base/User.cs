@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class User
@@ -8,10 +7,23 @@ public class User
     public long gyul;
     public long money;
     public long mPs;
+    public float backmusicVolume = 1f;
 
     public List<Sell> sellList = new List<Sell>();
     public List<Upgrade> upgradeList = new List<Upgrade>();
     public List<Event> eventList = new List<Event>();
+
+    public float doubleChance
+    {
+        get
+        {
+            if(eventList[0].eventChance >= 6f)
+            {
+                return eventList[0].eventChance;
+            }
+            return 0;
+        }
+    }
 
     public long mouseGpC
     {
