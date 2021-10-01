@@ -50,6 +50,7 @@ public class SellPanel : MonoBehaviour
             GameManager.Instance.CurrentUser.money += sell.getMoney;
             GameManager.Instance.UI.UpdatePropertyPanel();
             UpdateValues();
+            GameManager.Instance.SOUND.PlayEffectSound(1);
         }
     }
 
@@ -61,6 +62,7 @@ public class SellPanel : MonoBehaviour
             GameManager.Instance.CurrentUser.sellList[sellNumber].amount++;
             GameManager.Instance.UI.UpdatePropertyPanel();
             UpdateValues();
+            GameManager.Instance.SOUND.PlayEffectSound(2);
         }
     }
 }

@@ -46,6 +46,7 @@ public class UpgradePanel : MonoBehaviour
             GameManager.Instance.CurrentUser.upgradeList[upgradeNumber].amount++;
             GameManager.Instance.UI.UpdatePropertyPanel();
             UpdateValues();
+            GameManager.Instance.SOUND.PlayEffectSound(2);
         }
     }
 }

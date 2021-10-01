@@ -14,8 +14,15 @@ public class GyulText : MonoBehaviour
         gameObject.SetActive(true);
 
         gyulText.text = string.Format("+{0}", GameManager.Instance.UI.GetUnit(addGyul));
-        if (check == 1) gyulText.color = Color.white;
-        if (check == 2) gyulText.color = Color.yellow;
+        switch (check)
+        {
+            case 1:
+                gyulText.color = Color.white;
+                break;
+            case 2:
+                gyulText.color = Color.yellow;
+                break;
+        }
         transform.position = gyulTextPosition.transform.position;
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 

@@ -7,7 +7,9 @@ public class User
     public long gyul;
     public long money;
     public long mPs;
-    public float backmusicVolume = 1f;
+    public float backSoundVolume = 1f;
+    public float effectSoundVolume = 1f;
+    public float gopValue;
 
     public List<Sell> sellList = new List<Sell>();
     public List<Upgrade> upgradeList = new List<Upgrade>();
@@ -29,7 +31,7 @@ public class User
     {
         get
         {
-            return (long)(1f < TotalgPs ? TotalgPs : 1f);
+            return (long)((1f < TotalgPs ? TotalgPs : 1f) * gopValue);
         }
     }
 

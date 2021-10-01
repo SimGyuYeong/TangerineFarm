@@ -55,7 +55,7 @@ public class Upgrade
         {
             if(upgradeNumber <= 2)
             {
-                return (int)((amount * baseGpC) / 3.5f);
+                return (int)((amount * baseGpC) / 2f);
             }
             else
             {

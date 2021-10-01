@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class GameManager : MonoSingletone<GameManager>
 {
-    [SerializeField]
-    private User user = null;
+    [SerializeField] private User user = null;
     public User CurrentUser { get { return user; } }
 
+    [SerializeField]
     private UIManager uIManager = null;
     public UIManager UI {  get { return uIManager;  } }
+
+    [SerializeField]
+    private SoundManager soundManager = null;
+    public SoundManager SOUND { get { return soundManager; } }
         
     private string SAVE_DATA_PATH;
     private string SAVE_FILE_NAME = "/SaveFile.txt";
@@ -28,19 +32,25 @@ public class GameManager : MonoSingletone<GameManager>
     {
         SAVE_DATA_PATH = Application.persistentDataPath;
         uIManager = GetComponent<UIManager>();
+        soundManager = GetComponent<SoundManager>();
         LoadFromJson();
         uIManager.Init();
         uIManager.UpdatePropertyPanel();
         InvokeRepeating("GyulPerSecond", 0f, 1f);
         InvokeRepeating("AutoGyulChangeMoney", 0f, 1f);
-        uIManager.AllMenuButtonFalse();
+        CurrentUser.gopValue = 1f;
     }
 
     public void OnClickTree()
     {
+        SOUND.PlayEffectSound(0);
         CurrentUser.gyul += CurrentUser.mouseGpC;
         int chance = Random.Range(0, 100);
-        if (chance < CurrentUser.doubleChance)
+        if(UI.isPlenty == true)
+        {
+            gyulTextShow(2, CurrentUser.mouseGpC);
+        }
+        else if (chance < CurrentUser.doubleChance)
         {
             CurrentUser.gyul += CurrentUser.mouseGpC;
             gyulTextShow(2, CurrentUser.mouseGpC * 2);
@@ -50,6 +60,7 @@ public class GameManager : MonoSingletone<GameManager>
            gyulTextShow(1, CurrentUser.mouseGpC);
         }
         uIManager.UpdatePropertyPanel();
+        UI.PlentyUp();
     }
 
     private void gyulTextShow(int check, long addGyul)
@@ -79,9 +90,8 @@ public class GameManager : MonoSingletone<GameManager>
         {
             if (CurrentUser.TotalGcM >= 1)
             {
-                long amount = CurrentUser.baseGcM();
                 CurrentUser.money += CurrentUser.TotalGcM;
-                CurrentUser.gyul -= amount;
+                CurrentUser.gyul -= CurrentUser.baseGcM();
                 uIManager.UpdatePropertyPanel();
             }
         }
@@ -112,7 +122,7 @@ public class GameManager : MonoSingletone<GameManager>
             user.upgradeList.Add(new Upgrade("판매업체", 5, "섭외")); //초당 귤 교환 증가
             user.upgradeList.Add(new Upgrade("업체 수", 6, "늘리기")); //초당 가져가는 귤 개수 증가
             user.eventList = new List<Event>();
-            user.eventList.Add(new Event("더블클릭", 0, 5f));   
+            user.eventList.Add(new Event("황금귤 드랍확률", 0, 5f));   
             SaveToJson();
         }
     }
